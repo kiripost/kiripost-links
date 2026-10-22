@@ -7,8 +7,8 @@
 <meta name="description" content="Tap a post to read the full story on Kiripost.">
 <meta property="og:title" content="Kiripost | Stories from our Instagram">
 <meta property="og:description" content="Tap a post to read the full story on Kiripost.">
-<meta property="og:image" content="https://links.kiripost.com/assets/apple-touch-icon.png">
-<meta name="theme-color" content="#fffdf9">
+<meta property="og:image" content="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,9 +25,9 @@
 -->
 <style>
   :root {
-    /* "Clean newsroom" look (same colours as the Chart Maker's Kiripost Clean pack) */
-    --page:#fffdf9; --ink:#122d4a; --muted:#5a564f; --accent:#065091; --red:#de2c35;
-    --line:#d9d4ca; --tile:#eeeae2; --pill-bg:#122d4a; --pill-ink:#ffffff;
+    /* Layout C, light. Colours follow kiripost.com's logo blues. */
+    --page:#fafbfc; --ink:#14181d; --muted:#5b626b; --accent:#005091; --blue:#009fe3;
+    --line:#e3e6ea; --tile:#e9edf1; --pill-bg:#005091; --pill-ink:#ffffff; --bar:#ffffff; --ring:#cfd4da;
     --font:"PP Mori", Inter, "Kantumruy Pro", "Helvetica Neue", Arial, sans-serif;
   }
   * { box-sizing:border-box; }
@@ -38,29 +38,38 @@
   }
   .wrap { max-width:640px; margin:0 auto; padding:0 16px calc(24px + env(safe-area-inset-bottom)); }
 
-  /* header */
-  header { text-align:center; padding:28px 0 6px; }
-  header img { width:56px; height:auto; }
-  header .kicker { margin:10px 0 0; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
-  header h1 { margin:2px 0 0; font-size:22px; line-height:1.2; font-weight:600; }
-  header p { margin:2px 0 0; font-size:14px; color:var(--muted); }
-
-  /* buttons */
-  .pills { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:14px 0 6px; margin:0; list-style:none; }
-  .pills a {
-    display:inline-block; min-height:40px; padding:9px 16px; border-radius:999px; font-size:14px; font-weight:600;
-    text-decoration:none; color:var(--ink); border:1.5px solid var(--ink); background:transparent;
+  /* sticky top bar: logo left, Website button right */
+  .bar { position:sticky; top:0; z-index:5; background:var(--bar); border-bottom:1px solid var(--line); }
+  .bar .in { max-width:640px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .logo { display:block; height:34px; width:auto; }
+  .site-btn {
+    display:inline-block; min-height:40px; padding:10px 18px; border-radius:6px; font-size:14px; font-weight:600;
+    text-decoration:none; background:var(--pill-bg); color:var(--pill-ink);
   }
-  .pills a.primary { background:var(--pill-bg); color:var(--pill-ink); border-color:var(--pill-bg); }
-  .pills a:focus-visible, .tabs button:focus-visible, .post:focus-visible, .more:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  .site-btn:focus-visible, .social a:focus-visible, .pills a:focus-visible, .tabs button:focus-visible, .post:focus-visible, .more:focus-visible { outline:3px solid var(--blue); outline-offset:2px; }
+
+  /* social icons */
+  .social { display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin:0; padding:16px 0 0; list-style:none; }
+  .social a, .social span {
+    width:44px; height:44px; border-radius:50%; border:1.5px solid var(--ring); background:#fff; color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .social span { opacity:.55; }
+  .social svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* action buttons */
+  .pills { display:flex; justify-content:center; gap:8px; padding:14px 0 4px; margin:0; list-style:none; }
+  .pills li { flex:1 1 0; max-width:200px; }
+  .pills a { display:block; text-align:center; min-height:40px; padding:10px 12px; border-radius:999px; font-size:14px; font-weight:600;
+    text-decoration:none; color:var(--ink); border:1.5px solid var(--ring); background:#fff; }
 
   /* tabs */
-  .tabs { display:flex; margin:14px 0 14px; border-bottom:1px solid var(--line); }
+  .tabs { display:flex; margin:10px 0 14px; border-bottom:1px solid var(--line); }
   .tabs button {
     flex:1; appearance:none; background:none; border:0; border-bottom:2px solid transparent; margin-bottom:-1px;
     padding:10px 4px; font:inherit; font-size:14px; color:var(--muted); cursor:pointer;
   }
-  .tabs button[aria-selected="true"] { color:var(--ink); font-weight:600; border-bottom-color:var(--red); }
+  .tabs button[aria-selected="true"] { color:var(--ink); font-weight:600; border-bottom-color:var(--blue); }
 
   /* grid of posts */
   .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px 12px; }
@@ -85,13 +94,14 @@
 </style>
 </head>
 <body>
+<div class="bar"><div class="in">
+  <a href="https://kiripost.com" aria-label="Kiripost home"><img class="logo" id="logo" src="https://kiripost.com/assets/images/kiripost-logo.svg" alt="Kiripost" width="116" height="34"></a>
+  <a class="site-btn" id="site-btn" href="https://kiripost.com">Website</a>
+</div></div>
 <div class="wrap">
-  <header>
-    <img src="assets/logo-navy.png" alt="Kiripost" width="56" height="60">
-    <p class="kicker">Stories from our Instagram</p>
-    <h1>Kiripost</h1>
-    <p id="tagline"></p>
-  </header>
+  <h1 class="sr-only">Kiripost: stories from our Instagram</h1>
+  <p id="tagline" class="sr-only"></p>
+  <ul class="social" id="social"></ul>
   <ul class="pills" id="pills"></ul>
   <nav class="tabs" role="tablist" aria-label="Posts" id="tabs"></nav>
   <main>
@@ -113,12 +123,24 @@ const SETTINGS = {
 
   tagline: "Tap a post to read the full story",
 
-  // Buttons under the logo. A button with an empty url is hidden.
+  // Website button (top right of the bar).
+  websiteUrl: "https://kiripost.com",
+
+  // Social icons. An icon with an empty url is hidden on the live page.
+  // previewEmpty: true shows empty icons greyed out, only so a test copy shows the layout.
+  previewEmpty: false,
+  social: [
+    { name: "Facebook",  icon: "facebook",  url: "https://www.facebook.com/kiripostmedia" },
+    { name: "Telegram",  icon: "telegram",  url: "https://t.me/kiripostmedia" },
+    { name: "YouTube",   icon: "youtube",   url: "https://www.youtube.com/@kiripost" },
+    { name: "TikTok",    icon: "tiktok",    url: "https://www.tiktok.com/@kiripostmedia" },
+    { name: "Instagram", icon: "instagram", url: "https://www.instagram.com/kiripostmedia" }
+  ],
+
+  // Buttons under the icons. A button with an empty url is hidden.
   buttons: [
-    { label: "Website",    url: "https://kiripost.com", primary: true },
-    { label: "Newsletter", url: "" },
-    { label: "Telegram",   url: "" },
-    { label: "ខ្មែរ",       url: "" }
+    { label: "Donate", url: "" },
+    { label: "ខ្មែរ",   url: "" }
   ],
 
   // Tabs. "all: true" shows every post. Otherwise a post shows in a tab when its "tab"
@@ -129,7 +151,7 @@ const SETTINGS = {
     { key: "Academy", label: "Academy" }
   ],
 
-  // Added to every story link so kiripost.com's analytics show these visits as coming from the Instagram bio.
+  // Added to every story link so Google Analytics can count visits from the Instagram bio.
   tracking: { utm_source: "instagram", utm_medium: "social", utm_campaign: "link_in_bio" },
 
   postsPerPage: 24
@@ -204,12 +226,36 @@ function el(tag, attrs, text) {
   return e;
 }
 
+const ICONS = {
+  facebook: '<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',
+  telegram: '<path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15z"/>',
+  youtube: '<rect x="3" y="6" width="18" height="12" rx="3"/><path d="m10 9 5 3-5 3z"/>',
+  tiktok: '<path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.3 2.4 1.9 4 4.5 4.2"/>',
+  instagram: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r=".6"/>'
+};
+function iconSvg(name) {
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
+  s.innerHTML = ICONS[name] || "";
+  return s;
+}
 function renderChrome() {
   $("tagline").textContent = SETTINGS.tagline;
-  const pills = $("pills");
-  SETTINGS.buttons.filter(b => b.url).forEach(b => {
+  $("site-btn").href = SETTINGS.websiteUrl;
+  const logo = $("logo");
+  logo.addEventListener("error", () => { logo.onerror = null; logo.src = "assets/logo-navy.png"; logo.width = 32; });
+  const social = $("social");
+  SETTINGS.social.forEach(s => {
+    if (!s.url && !SETTINGS.previewEmpty) return;
     const li = el("li");
-    const a = el("a", { href: b.url, class: b.primary ? "primary" : "" }, b.label);
+    const a = s.url ? el("a", { href: s.url, "aria-label": s.name }) : el("span", { "aria-label": s.name + " (link not set yet)" });
+    a.appendChild(iconSvg(s.icon)); li.appendChild(a); social.appendChild(li);
+  });
+  const pills = $("pills");
+  SETTINGS.buttons.filter(b => b.url || SETTINGS.previewEmpty).forEach(b => {
+    const li = el("li");
+    const a = el("a", b.url ? { href: b.url } : { href: "#", "aria-disabled": "true" }, b.label);
+    if (!b.url) a.addEventListener("click", e => e.preventDefault());
     if (/[ក-៿]/.test(b.label)) a.setAttribute("lang", "km");
     li.appendChild(a); pills.appendChild(li);
   });
