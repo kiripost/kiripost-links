@@ -8,8 +8,7 @@
 <meta property="og:title" content="Kiripost | Stories from our Instagram">
 <meta property="og:description" content="Tap a post to read the full story on Kiripost.">
 <meta property="og:image" content="https://links.kiripost.com/assets/apple-touch-icon.png">
-<meta name="theme-color" content="#faf6f0" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1924" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fffdf9">
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,33 +25,24 @@
 -->
 <style>
   :root {
-    --page:#faf6f0; --grid:#efe8dc; --ink:#122d4a; --muted:#5a564f; --accent:#065091;
-    --line:#e0d8cb; --tile:#e9e2d6; --pill-bg:#122d4a; --pill-ink:#ffffff;
+    /* "Clean newsroom" look (same colours as the Chart Maker's Kiripost Clean pack) */
+    --page:#fffdf9; --ink:#122d4a; --muted:#5a564f; --accent:#065091; --red:#de2c35;
+    --line:#d9d4ca; --tile:#eeeae2; --pill-bg:#122d4a; --pill-ink:#ffffff;
     --font:"PP Mori", Inter, "Kantumruy Pro", "Helvetica Neue", Arial, sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --page:#0f1924; --grid:#16273a; --ink:#e3eaf2; --muted:#9fb0c3; --accent:#14b3f7;
-      --line:#23364b; --tile:#16273a; --pill-bg:#e3eaf2; --pill-ink:#0f1924;
-    }
-    .logo-light { display:none; }
-    .logo-dark { display:inline-block !important; }
   }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
   body {
     margin:0; min-height:100vh; color:var(--ink); font:15px/1.5 var(--font);
     background-color:var(--page);
-    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-    background-size:24px 24px;
   }
   .wrap { max-width:640px; margin:0 auto; padding:0 16px calc(24px + env(safe-area-inset-bottom)); }
 
   /* header */
   header { text-align:center; padding:28px 0 6px; }
   header img { width:56px; height:auto; }
-  .logo-dark { display:none; }
-  header h1 { margin:6px 0 0; font-size:22px; line-height:1.2; font-weight:600; }
+  header .kicker { margin:10px 0 0; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
+  header h1 { margin:2px 0 0; font-size:22px; line-height:1.2; font-weight:600; }
   header p { margin:2px 0 0; font-size:14px; color:var(--muted); }
 
   /* buttons */
@@ -70,7 +60,7 @@
     flex:1; appearance:none; background:none; border:0; border-bottom:2px solid transparent; margin-bottom:-1px;
     padding:10px 4px; font:inherit; font-size:14px; color:var(--muted); cursor:pointer;
   }
-  .tabs button[aria-selected="true"] { color:var(--ink); font-weight:600; border-bottom-color:var(--accent); }
+  .tabs button[aria-selected="true"] { color:var(--ink); font-weight:600; border-bottom-color:var(--red); }
 
   /* grid of posts */
   .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px 12px; }
@@ -97,8 +87,8 @@
 <body>
 <div class="wrap">
   <header>
-    <img class="logo-light" src="assets/logo-navy.png" alt="Kiripost" width="56" height="60">
-    <img class="logo-dark" src="assets/logo-white.png" alt="Kiripost" width="56" height="60">
+    <img src="assets/logo-navy.png" alt="Kiripost" width="56" height="60">
+    <p class="kicker">Stories from our Instagram</p>
     <h1>Kiripost</h1>
     <p id="tagline"></p>
   </header>
@@ -252,7 +242,7 @@ function renderGrid() {
     const box = el("div", { class: "img" });
     box.appendChild(el("img", { src: p.image, alt: "", loading: i < 4 ? "eager" : "lazy", decoding: "async" }));
     a.appendChild(box);
-    if (p.tag) { const t = el("span", { class: "tag" }, p.tag); if (/[\u1780-\u17FF]/.test(p.tag)) t.setAttribute("lang", "km"); a.appendChild(t); }
+    if (p.tag) { const t = el("span", { class: "tag" }, p.tag); if (/[ក-៿]/.test(p.tag)) t.setAttribute("lang", "km"); a.appendChild(t); }
     const hl = el("span", { class: "hl" }, p.headline || p.link);
     if (/[ក-៿]/.test(p.headline || "")) hl.setAttribute("lang", "km");
     a.appendChild(hl);
