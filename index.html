@@ -36,7 +36,8 @@
     margin:0; min-height:100vh; color:var(--ink); font:15px/1.5 var(--font);
     background-color:var(--page);
   }
-  .wrap { max-width:640px; margin:0 auto; padding:0 16px calc(24px + env(safe-area-inset-bottom)); }
+  .wrap { max-width:640px; margin:0 auto; padding:0 0 calc(24px + env(safe-area-inset-bottom)); }
+  .wrap > .social, .wrap > .pills, .wrap > footer { padding-left:16px; padding-right:16px; }
 
   /* sticky top bar: logo left, Website button right */
   .bar { position:sticky; top:0; z-index:5; background:var(--bar); border-bottom:1px solid var(--line); }
@@ -46,7 +47,7 @@
     display:inline-block; min-height:40px; padding:10px 18px; border-radius:6px; font-size:14px; font-weight:600;
     text-decoration:none; background:var(--pill-bg); color:var(--pill-ink);
   }
-  .site-btn:focus-visible, .social a:focus-visible, .pills a:focus-visible, .tabs button:focus-visible, .post:focus-visible, .more:focus-visible { outline:3px solid var(--blue); outline-offset:2px; }
+  .site-btn:focus-visible, .social a:focus-visible, .pills a:focus-visible, .tabs button:focus-visible, .post:focus-visible, .more:focus-visible { outline:3px solid var(--blue); outline-offset:-3px; }
 
   /* social icons */
   .social { display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin:0; padding:16px 0 0; list-style:none; }
@@ -64,24 +65,21 @@
     text-decoration:none; color:var(--ink); border:1.5px solid var(--ring); background:#fff; }
 
   /* tabs */
-  .tabs { display:flex; margin:10px 0 14px; border-bottom:1px solid var(--line); }
+  .tabs { display:flex; margin:10px 0 3px; border-bottom:1px solid var(--line); }
   .tabs button {
     flex:1; appearance:none; background:none; border:0; border-bottom:2px solid transparent; margin-bottom:-1px;
     padding:10px 4px; font:inherit; font-size:14px; color:var(--muted); cursor:pointer;
   }
   .tabs button[aria-selected="true"] { color:var(--ink); font-weight:600; border-bottom-color:var(--blue); }
 
-  /* grid of posts */
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px 12px; }
-  @media (min-width:560px) { .grid { grid-template-columns:repeat(3,1fr); } }
-  .post { display:block; text-decoration:none; color:inherit; border-radius:8px; }
-  .post .img { aspect-ratio:4/5; border-radius:8px; overflow:hidden; background:var(--tile); }
-  .post img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .25s; }
-  @media (hover:hover) { .post:hover img { transform:scale(1.03); } .post:hover .hl { text-decoration:underline; } }
-  .post .tag { display:block; margin-top:8px; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
-  .post [lang=km] { letter-spacing:0; text-transform:none; line-height:1.6; }
-  .post .hl { display:block; margin-top:2px; font-size:14px; line-height:1.3; font-weight:600; }
-  .post time { display:block; margin-top:3px; font-size:12px; color:var(--muted); }
+  /* grid of posts: 3 columns like the Instagram profile, picture only */
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+  .post { position:relative; display:block; text-decoration:none; color:inherit; }
+  .post .img { aspect-ratio:4/5; overflow:hidden; background:var(--tile); }
+  .post img { width:100%; height:100%; object-fit:cover; display:block; transition:opacity .2s; }
+  @media (hover:hover) { .post:hover img { opacity:.86; } }
+  .post .play { position:absolute; right:6px; top:6px; width:22px; height:22px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.55)); }
+  .post .play path { fill:#fff; }
   .empty { grid-column:1/-1; text-align:center; color:var(--muted); padding:28px 0; }
   .more {
     display:block; margin:22px auto 0; padding:10px 22px; border-radius:999px; font:inherit; font-size:14px; font-weight:600;
@@ -119,7 +117,7 @@
 const SETTINGS = {
   // The Google Sheet, published as CSV: File > Share > Publish to web > (the Posts tab) > CSV.
   // Paste the address it gives you between the quotes. Leave it empty to use BACKUP_POSTS.
-  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_jvPYNqXHdRlTvaoZblyV91WNyBuf0R-o8KLHsDVLsS9H8XzFOuNCBfbctufoWpkX2_X9pyc6fcbS/pub?gid=560866485&single=true&output=csv",
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzQUv2NLMMSKMgtzJFkQ2_Nks9hnS2kJ4p9it2VT7JrF9XTQoFPdo1rWLHH-Cfj-5QowzFBGul7wkx/pub?gid=1029545437&single=true&output=csv",
 
   tagline: "Tap a post to read the full story",
 
@@ -143,33 +141,49 @@ const SETTINGS = {
     { label: "ខ្មែរ",   url: "" }
   ],
 
-  // Tabs. "all: true" shows every post. Otherwise a post shows in a tab when its "tab"
-  // column in the Sheet contains the tab's key (for example "Data" or "Data, Academy").
+  // Tabs. "Latest" shows every normal post, in the same order as the Instagram profile.
+  // "Reels" shows the rows whose "type" column says reel: each opens a long video on YouTube.
   tabs: [
-    { key: "Latest",  label: "Latest", all: true },
-    { key: "Data",    label: "Data stories" },
-    { key: "Academy", label: "Academy" }
+    { key: "Latest", label: "Latest", type: "post" },
+    { key: "Reels",  label: "Reels",  type: "reel" }
   ],
 
   // Added to every story link so Google Analytics can count visits from the Instagram bio.
   tracking: { utm_source: "instagram", utm_medium: "social", utm_campaign: "link_in_bio" },
 
-  postsPerPage: 24
+  // To show the real Instagram graphic on a tile, upload it to the "cards" folder named after
+  // the post's Instagram code (the letters at the end of its address), for example cards/De0gJgXkr0l.jpg.
+  // If that file is missing the tile uses the "image" column of the Sheet instead.
+  cardsFolder: "cards/",
+
+  postsPerPage: 36
 };
 
 /* =========================================================================================
-   BACKUP_POSTS  -  shown only when the Sheet can't be loaded. Same columns as the Sheet.
-   Newest first. Replace now and then so the backup isn't too old.
+   BACKUP_POSTS  -  shown only when the Sheet can't be loaded. Same columns as the Sheet:
+   ig (Instagram code), type (post or reel), date, link, image, headline (screen readers only).
    ========================================================================================= */
 const BACKUP_POSTS = [
-  { date: "2026-10-05", image: "https://cdn.kiripost.com/static/images/workers_30_2.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/qi-heng-xin-factory-alleged-of-union-busting-global-brands-urged-to-take-action", headline: "Qi Heng Xin Factory Alleged of Union Busting, Global Brands Urged to Take Action", tag: "Business", tab: "" },
-  { date: "2026-10-02", image: "https://cdn.kiripost.com/static/images/starbuck_cambodiajpg.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/lucky-supermarkets-parent-company-to-take-over-all-starbucks-businesses-in-cambodia", headline: "Lucky Supermarket’s Parent Company to Take Over All Starbucks Businesses in Cambodia", tag: "Business", tab: "" },
-  { date: "2026-10-02", image: "https://cdn.kiripost.com/static/images/photo_2026-08-26_10-01-39.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/agroecology-offers-cambodian-farmers-path-to-greater-resilience", headline: "Agroecology Offers Cambodian Farmers Path to Greater Resilience", tag: "Agriculture", tab: "" },
-  { date: "2026-10-02", image: "https://cdn.kiripost.com/static/images/Hun_Manet.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/pm-vows-health-and-education-budgets-will-not-be-cut-amid-higher-defence-spending", headline: "PM Vows Health and Education Budgets Will Not Be Cut Amid Higher Defence Spending", tag: "Education", tab: "" },
-  { date: "2026-10-02", image: "https://cdn.kiripost.com/static/images/Traffic_jam_1.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/212-road-accidents-recorded-in-september-prompting-pchum-ben-safety-concerns", headline: "212 Road Accidents Recorded in September, Prompting Pchum Ben Safety Concerns", tag: "General News", tab: "" },
-  { date: "2026-10-02", image: "https://cdn.kiripost.com/static/images/japaness_12.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/japan-seeks-deeper-ties-with-cambodia-amid-investment-and-border-challenges", headline: "Japan Seeks Deeper Ties with Cambodia Amid Investment and Border Challenges", tag: "Economy", tab: "Data" },
-  { date: "2026-10-02", image: "https://cdn.kiripost.com/static/images/Daily_life_3_2.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/stiglitzs-inequality-warning-prompts-questions-for-cambodia", headline: "Stiglitz’s Inequality Warning Prompts Questions for Cambodia", tag: "Economy", tab: "" },
-  { date: "2026-09-30", image: "https://cdn.kiripost.com/static/images/workers_26.2e16d0ba.fill-960x720.jpg", link: "https://kiripost.com/stories/cambodia-sets-2027-garment-minimum-wage-at-212-as-unions-demand-25066", headline: "Cambodia Sets 2027 Garment Minimum Wage at $212, As Unions Demand $250.66", tag: "Economy", tab: "" }
+  { ig: "De1PdLyyvmp", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodias-air-passenger-traffic-falls-11-as-cargo-grows-18", image: "https://cdn.kiripost.com/static/images/Airport_5.2e16d0ba.fill-960x540.jpg", headline: "Cambodia's Air Passenger Traffic Falls 11% as Cargo Grows 18%" },
+  { ig: "De1Ll7MEh-w", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodia-freezes-prince-groups-1b-asset-continues-to-pursue-suspects", image: "https://cdn.kiripost.com/static/images/559576688_1298724508933544_2834088.2e16d0ba.fill-960x540.jpg", headline: "Cambodia Freezes Prince Group's $1B Asset, Continues to Pursue Suspects" },
+  { ig: "De1KGROkivZ", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/world-vision-invests-81m-to-tackle-poverty-climate-risks-and-child-vulnerability-in-kratie", image: "https://cdn.kiripost.com/static/images/WATERMARK_3_2__boat.2e16d0ba.fill-960x540.png", headline: "World Vision Invests $8.1M in Kratie" },
+  { ig: "De0gJgXkr0l", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/cambodia-boosts-gold-reserves-to-strengthen-economic-stability", image: "https://cdn.kiripost.com/static/images/2025-04-08T060218Z_1281748604_RC2Y.2e16d0ba.fill-960x540.jpg", headline: "Cambodia Boosts Gold Reserves to Strengthen Economic Stability" },
+  { ig: "DeyjaSiEkI_", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/imf-warns-ldc-graduation-cannot-guarantee-revenue-growth-urges-more-integrated-policies", image: "https://cdn.kiripost.com/static/images/Kiripost_Graphics21.2e16d0ba.fill-960x540.jpg", headline: "IMF Warns LDC Graduation Cannot Guarantee Revenue Growth" },
+  { ig: "DeyiW1xknNl", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/extreme-heat-occupational-safety-non-compliance-found-in-factories-bfc-report-says", image: "https://cdn.kiripost.com/static/images/factory_worker.2e16d0ba.fill-960x540.jpg", headline: "Extreme Heat, Occupational Safety Non-Compliance Found in Factories" },
+  { ig: "Deyh-reEk3F", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/supporting-childrens-mental-health-in-cambodia-the-role-of-the-adults-around-them", image: "https://cdn.kiripost.com/static/images/children_01_3.2e16d0ba.fill-960x540.jpg", headline: "Supporting Children's Mental Health in Cambodia" },
+  { ig: "DeyhkT0EiOg", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/cambodia-launches-digital-professionals-association-as-ai-reshapes-technology-skills", image: "https://cdn.kiripost.com/static/images/WATERMARK_16_9__4800_x_2700.2e16d0ba.fill-960x540.png", headline: "Cambodia Launches Digital Professionals Association" },
+  { ig: "DeyhEamkrTG", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/kiripost-opens-applications-for-15-day-data-journalism-training-programme", image: "https://cdn.kiripost.com/static/images/Kiripost_Training-8.2e16d0ba.fill-960x540.jpg", headline: "Kiripost Opens Applications for 15-Day Data Journalism Training" },
+  { ig: "DewWBxzRQWh", type: "post", date: "2026-10-21", link: "https://kiripost.com/stories/an-ancient-temple-beneath-a-borey-project-can-phnom-penh-protect-its-pre-angkorian-past", image: "https://cdn.kiripost.com/static/images/site6.2e16d0ba.fill-960x540.png", headline: "An Ancient Temple Beneath a Borey Project" },
+  { ig: "DewKAv1ko0w", type: "post", date: "2026-10-21", link: "https://kiripost.com/stories/el-nino-threatens-2027-water-supply-as-civil-society-calls-for-sustainable-water-reserves", image: "https://cdn.kiripost.com/static/images/Kompong_Klaing_1.2e16d0ba.fill-960x540.png", headline: "El Nino Threatens 2027 Water Supply" },
+  { ig: "Deve36kksVw", type: "post", date: "2026-10-20", link: "https://kiripost.com/stories/an-ancient-temple-beneath-a-borey-project-can-phnom-penh-protect-its-pre-angkorian-past", image: "https://cdn.kiripost.com/static/images/site6.2e16d0ba.fill-960x540.png", headline: "An Ancient Temple Beneath a Borey Project" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=LLOyWyM6zy0", headline: "Canada's Ambassador on Cambodia's Future: Investment, Reform and Regional Cooperation" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=HM2-1UUHidA", headline: "Pests, Climate Change Push Farmers to the Brink" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=yz4OX0YbP6w", headline: "One Bad Ingredient Can Break a Brand: Food Safety Matters at Every Step" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=XP7PHXlE2fk", headline: "Could the Tonle Sap's Pulse Be at Risk?" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=ADy51--nO5A", headline: "How Australia Awards Transformed a Scholar into a National Education Leader" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=wpFmMhx-kcI", headline: "\"Don't Just Sell Raw\": Australia Urges Cambodia to Build a High-Value Food Sector" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=Mn5bDUJl1Hk", headline: "Cambodia's 2029 LDC Graduation: Is the Country Ready to Lose EU EBA Trade Privileges?" },
+  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=NgpFqnwlm7Q", headline: "From Refugee Camp to Battambang School: The Rise of Phare Ponleu Selpak" }
 ];
 
 /* ============================== nothing to change below ============================== */
@@ -200,7 +214,31 @@ function rowsToPosts(rows) {
   return rows.map(r => Object.fromEntries(head.map((h, i) => [h, (r[i] || "").trim()])));
 }
 function clean(list) {
-  return list.filter(p => p.link && p.image && !/^(yes|y|x|true|hide)$/i.test(p.hide || ""));
+  return list.filter(p => p.link && !/^(yes|y|x|true|hide)$/i.test(p.hide || "")).map(p => ({ ...p, type: /reel/i.test(p.type || "") ? "reel" : "post" }));
+}
+// Instagram codes are time-ordered numbers written in base 64, so the code alone gives the Instagram order.
+const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+function igRank(code) {
+  let n = 0n;
+  for (const ch of code || "") { const i = B64.indexOf(ch); if (i < 0) return null; n = n * 64n + BigInt(i); }
+  return n;
+}
+// Posts with an Instagram code are ordered exactly as on Instagram (newest first).
+// A row with no code yet counts as the newest, so you can add it before the code is known.
+function sortPosts(list) {
+  const FAR = 1n << 200n;
+  return list.map((p, i) => ({ p, i, k: p.ig ? (igRank(p.ig) ?? 0n) : FAR }))
+    .sort((a, b) => (a.k === b.k ? a.i - b.i : a.k > b.k ? -1 : 1)).map(x => x.p);
+}
+function youtubeId(url) {
+  const m = /(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/)([\w-]{11})/.exec(url || "");
+  return m ? m[1] : "";
+}
+function tileImages(p) {
+  const list = [];
+  if (p.type === "reel") { const id = youtubeId(p.link); if (p.image) list.push(p.image); if (id) list.push("https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"); }
+  else { if (p.ig) list.push(SETTINGS.cardsFolder + p.ig + ".jpg"); if (p.image) list.push(p.image); }
+  return list;
 }
 function prettyDate(s) {
   const m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s || "");
@@ -211,14 +249,12 @@ function prettyDate(s) {
 function withTracking(url) {
   try {
     const u = new URL(url);
+    if (!/(^|\.)kiripost\.com$/i.test(u.hostname)) return url;
     for (const k in SETTINGS.tracking) if (!u.searchParams.has(k)) u.searchParams.set(k, SETTINGS.tracking[k]);
     return u.toString();
   } catch (e) { return url; }
 }
-function inTab(p, tab) {
-  if (tab.all) return true;
-  return (p.tab || "").split(",").map(s => s.trim().toLowerCase()).includes(tab.key.toLowerCase());
-}
+function inTab(p, tab) { return p.type === tab.type; }
 function el(tag, attrs, text) {
   const e = document.createElement(tag);
   for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
@@ -275,7 +311,7 @@ function selectTab(key, fromClick) {
 }
 function renderGrid() {
   const tab = SETTINGS.tabs.find(t => t.key === currentTab) || SETTINGS.tabs[0];
-  const list = (posts || []).filter(p => inTab(p, tab));
+  const list = sortPosts((posts || []).filter(p => inTab(p, tab)));
   const grid = $("grid"); grid.textContent = "";
   $("grid-title").textContent = tab.label;
   if (posts === null) {            // still loading: grey placeholder tiles
@@ -284,15 +320,19 @@ function renderGrid() {
   }
   if (!list.length) { grid.appendChild(el("p", { class: "empty" }, "No posts here yet.")); $("more").hidden = true; return; }
   list.slice(0, shown).forEach((p, i) => {
-    const a = el("a", { class: "post", href: withTracking(p.link) });
+    const a = el("a", { class: "post", href: withTracking(p.link), "aria-label": (p.headline || "Read the story") + (p.type === "reel" ? " (video on YouTube)" : "") });
     const box = el("div", { class: "img" });
-    box.appendChild(el("img", { src: p.image, alt: "", loading: i < 4 ? "eager" : "lazy", decoding: "async" }));
+    const imgs = tileImages(p), pic = el("img", { alt: "", loading: i < 9 ? "eager" : "lazy", decoding: "async" });
+    let n = 0;
+    pic.addEventListener("error", () => { if (++n < imgs.length) pic.src = imgs[n]; });
+    if (imgs.length) pic.src = imgs[0];
+    box.appendChild(pic);
     a.appendChild(box);
-    if (p.tag) { const t = el("span", { class: "tag" }, p.tag); if (/[ក-៿]/.test(p.tag)) t.setAttribute("lang", "km"); a.appendChild(t); }
-    const hl = el("span", { class: "hl" }, p.headline || p.link);
-    if (/[ក-៿]/.test(p.headline || "")) hl.setAttribute("lang", "km");
-    a.appendChild(hl);
-    if (p.date) a.appendChild(el("time", /^\d{4}-\d{1,2}-\d{1,2}/.test(p.date) ? { datetime: p.date.slice(0, 10) } : {}, prettyDate(p.date)));
+    if (p.type === "reel") {
+      const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      s.setAttribute("class", "play"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
+      s.innerHTML = '<path d="M8 5v14l11-7z"/>'; a.appendChild(s);
+    }
     grid.appendChild(a);
   });
   $("more").hidden = list.length <= shown;
