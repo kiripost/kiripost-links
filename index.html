@@ -151,9 +151,8 @@ const SETTINGS = {
   // Added to every story link so Google Analytics can count visits from the Instagram bio.
   tracking: { utm_source: "instagram", utm_medium: "social", utm_campaign: "link_in_bio" },
 
-  // To show the real Instagram graphic on a tile, upload it to the "cards" folder named after
-  // the post's Instagram code (the letters at the end of its address), for example cards/De0gJgXkr0l.jpg.
-  // If that file is missing the tile uses the "image" column of the Sheet instead.
+  // Each post's graphic is the address in the Sheet's "image" column (the graphic uploaded to kiripost.com).
+  // Optional backup: a file in this "cards" folder named after the post's Instagram code.
   cardsFolder: "cards/",
 
   postsPerPage: 36
@@ -164,18 +163,9 @@ const SETTINGS = {
    ig (Instagram code), type (post or reel), date, link, image, headline (screen readers only).
    ========================================================================================= */
 const BACKUP_POSTS = [
-  { ig: "De1PdLyyvmp", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodias-air-passenger-traffic-falls-11-as-cargo-grows-18", image: "https://cdn.kiripost.com/static/images/Airport_5.2e16d0ba.fill-960x540.jpg", headline: "Cambodia's Air Passenger Traffic Falls 11% as Cargo Grows 18%" },
+  { ig: "De1PdLyyvmp", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodias-air-passenger-traffic-falls-11-as-cargo-grows-18", image: "https://cdn.kiripost.com/static/images/TRAVEL.max-800x600.png", headline: "Cambodia's Air Passenger Traffic Falls 11% as Cargo Grows 18%" },
   { ig: "De1Ll7MEh-w", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodia-freezes-prince-groups-1b-asset-continues-to-pursue-suspects", image: "https://cdn.kiripost.com/static/images/559576688_1298724508933544_2834088.2e16d0ba.fill-960x540.jpg", headline: "Cambodia Freezes Prince Group's $1B Asset, Continues to Pursue Suspects" },
   { ig: "De1KGROkivZ", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/world-vision-invests-81m-to-tackle-poverty-climate-risks-and-child-vulnerability-in-kratie", image: "https://cdn.kiripost.com/static/images/WATERMARK_3_2__boat.2e16d0ba.fill-960x540.png", headline: "World Vision Invests $8.1M in Kratie" },
-  { ig: "De0gJgXkr0l", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/cambodia-boosts-gold-reserves-to-strengthen-economic-stability", image: "https://cdn.kiripost.com/static/images/2025-04-08T060218Z_1281748604_RC2Y.2e16d0ba.fill-960x540.jpg", headline: "Cambodia Boosts Gold Reserves to Strengthen Economic Stability" },
-  { ig: "DeyjaSiEkI_", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/imf-warns-ldc-graduation-cannot-guarantee-revenue-growth-urges-more-integrated-policies", image: "https://cdn.kiripost.com/static/images/Kiripost_Graphics21.2e16d0ba.fill-960x540.jpg", headline: "IMF Warns LDC Graduation Cannot Guarantee Revenue Growth" },
-  { ig: "DeyiW1xknNl", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/extreme-heat-occupational-safety-non-compliance-found-in-factories-bfc-report-says", image: "https://cdn.kiripost.com/static/images/factory_worker.2e16d0ba.fill-960x540.jpg", headline: "Extreme Heat, Occupational Safety Non-Compliance Found in Factories" },
-  { ig: "Deyh-reEk3F", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/supporting-childrens-mental-health-in-cambodia-the-role-of-the-adults-around-them", image: "https://cdn.kiripost.com/static/images/children_01_3.2e16d0ba.fill-960x540.jpg", headline: "Supporting Children's Mental Health in Cambodia" },
-  { ig: "DeyhkT0EiOg", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/cambodia-launches-digital-professionals-association-as-ai-reshapes-technology-skills", image: "https://cdn.kiripost.com/static/images/WATERMARK_16_9__4800_x_2700.2e16d0ba.fill-960x540.png", headline: "Cambodia Launches Digital Professionals Association" },
-  { ig: "DeyhEamkrTG", type: "post", date: "2026-10-22", link: "https://kiripost.com/stories/kiripost-opens-applications-for-15-day-data-journalism-training-programme", image: "https://cdn.kiripost.com/static/images/Kiripost_Training-8.2e16d0ba.fill-960x540.jpg", headline: "Kiripost Opens Applications for 15-Day Data Journalism Training" },
-  { ig: "DewWBxzRQWh", type: "post", date: "2026-10-21", link: "https://kiripost.com/stories/an-ancient-temple-beneath-a-borey-project-can-phnom-penh-protect-its-pre-angkorian-past", image: "https://cdn.kiripost.com/static/images/site6.2e16d0ba.fill-960x540.png", headline: "An Ancient Temple Beneath a Borey Project" },
-  { ig: "DewKAv1ko0w", type: "post", date: "2026-10-21", link: "https://kiripost.com/stories/el-nino-threatens-2027-water-supply-as-civil-society-calls-for-sustainable-water-reserves", image: "https://cdn.kiripost.com/static/images/Kompong_Klaing_1.2e16d0ba.fill-960x540.png", headline: "El Nino Threatens 2027 Water Supply" },
-  { ig: "Deve36kksVw", type: "post", date: "2026-10-20", link: "https://kiripost.com/stories/an-ancient-temple-beneath-a-borey-project-can-phnom-penh-protect-its-pre-angkorian-past", image: "https://cdn.kiripost.com/static/images/site6.2e16d0ba.fill-960x540.png", headline: "An Ancient Temple Beneath a Borey Project" },
   { type: "reel", date: "", link: "https://www.youtube.com/watch?v=LLOyWyM6zy0", headline: "Canada's Ambassador on Cambodia's Future: Investment, Reform and Regional Cooperation" },
   { type: "reel", date: "", link: "https://www.youtube.com/watch?v=HM2-1UUHidA", headline: "Pests, Climate Change Push Farmers to the Brink" },
   { type: "reel", date: "", link: "https://www.youtube.com/watch?v=yz4OX0YbP6w", headline: "One Bad Ingredient Can Break a Brand: Food Safety Matters at Every Step" },
@@ -237,7 +227,7 @@ function youtubeId(url) {
 function tileImages(p) {
   const list = [];
   if (p.type === "reel") { const id = youtubeId(p.link); if (p.image) list.push(p.image); if (id) list.push("https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"); }
-  else { if (p.ig) list.push(SETTINGS.cardsFolder + p.ig + ".jpg"); if (p.image) list.push(p.image); }
+  else { if (p.image) list.push(p.image); if (p.ig) list.push(SETTINGS.cardsFolder + p.ig + ".jpg"); }
   return list;
 }
 function prettyDate(s) {
