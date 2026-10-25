@@ -7,10 +7,10 @@
 <meta name="description" content="Tap a post to read the full story on Kiripost.">
 <meta property="og:title" content="Kiripost | Stories from our Instagram">
 <meta property="og:description" content="Tap a post to read the full story on Kiripost.">
-<meta property="og:image" content="assets/apple-touch-icon.png">
+<meta property="og:image" content="assets/apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" href="assets/favicon.png">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="assets/favicon.png?v=2">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Kantumruy+Pro:wght@400;600&display=swap" rel="stylesheet">
@@ -76,10 +76,18 @@
 
   /* grid of posts: 3 columns like the Instagram profile, picture only */
   .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
-  .post { position:relative; display:block; text-decoration:none; color:inherit; }
-  .post .img { aspect-ratio:4/5; overflow:hidden; background:var(--tile); }
-  .post img { width:100%; height:100%; object-fit:cover; display:block; transition:opacity .2s; }
-  @media (hover:hover) { .post:hover img { opacity:.86; } }
+  .post { position:relative; display:block; text-decoration:none; color:inherit; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .post .img { position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--tile); }
+  .post img { width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; }
+  /* hover / keyboard focus: Kiripost-blue frame and a soft blue wash, and the headline slides up in a navy strip */
+  .post .img::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .18s;
+    background:rgba(204,224,238,.28); box-shadow:inset 0 0 0 3px var(--accent); }
+  .post .cap { position:absolute; left:0; right:0; bottom:0; padding:9px 9px 10px; color:#fff; background:rgba(11,62,104,.95); pointer-events:none;
+    transform:translateY(101%); transition:transform .2s ease; }
+  .post .cap b { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; font-size:12.5px; line-height:1.3; font-weight:600; }
+  .post .cap i { display:block; margin-top:5px; font-style:normal; font-size:11.5px; font-weight:600; color:#4cc2f4; }
+  @media (hover:hover) { .post:hover .img::after, .post:focus-visible .img::after { opacity:1; } .post:hover .cap, .post:focus-visible .cap { transform:none; } }
+  .post:active .img::after { opacity:1; }
   .post .play { position:absolute; right:6px; top:6px; width:22px; height:22px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.55)); }
   .post .play path { fill:#fff; }
   .empty { grid-column:1/-1; text-align:center; color:var(--muted); padding:28px 0; }
@@ -90,7 +98,22 @@
   footer { text-align:center; padding:26px 0 0; font-size:12px; color:var(--muted); }
   footer a { color:var(--muted); }
   .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
-  @media (prefers-reduced-motion: reduce) { .post img { transition:none; } }
+  @media (prefers-reduced-motion: reduce) { .post .img::after, .post .cap { transition:none; } }
+
+  /* press-and-hold / right-click menu */
+  .menu-back { position:fixed; inset:0; z-index:50; background:rgba(11,62,104,.42); }
+  .menu { position:fixed; z-index:51; background:#fff; color:var(--ink); box-shadow:0 12px 40px rgba(11,62,104,.35); overflow:hidden; font-size:15px; }
+  .menu.sheet { left:0; right:0; bottom:0; border-radius:16px 16px 0 0; padding-bottom:env(safe-area-inset-bottom); max-height:80vh; overflow:auto; }
+  .menu.pop { width:280px; border-radius:10px; border:1px solid var(--line); }
+  .menu h2 { margin:0; padding:14px 16px 10px; font-size:13px; line-height:1.35; font-weight:600; color:var(--muted); border-bottom:1px solid var(--line);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .menu .grp { padding:10px 16px 2px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  .menu a, .menu button { display:flex; align-items:center; gap:12px; width:100%; min-height:46px; padding:10px 16px; border:0; background:none; font:inherit; color:var(--ink); text-align:left; text-decoration:none; cursor:pointer; }
+  .menu a:hover, .menu button:hover { background:#eaf3fa; }
+  .menu a:focus-visible, .menu button:focus-visible { outline:3px solid var(--blue); outline-offset:-3px; background:#eaf3fa; }
+  .menu svg { width:20px; height:20px; flex:none; fill:none; stroke:var(--accent); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .menu hr { border:0; border-top:1px solid var(--line); margin:4px 0; }
+  .toast { position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:60; max-width:90vw; padding:10px 16px; border-radius:999px; background:#0b3e68; color:#fff; font-size:14px; }
 </style>
 </head>
 <body>
@@ -122,8 +145,6 @@ const SETTINGS = {
   // Paste the address it gives you between the quotes. Leave it empty to use BACKUP_POSTS.
   sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzQUv2NLMMSKMgtzJFkQ2_Nks9hnS2kJ4p9it2VT7JrF9XTQoFPdo1rWLHH-Cfj-5QowzFBGul7wkx/pub?gid=1029545437&single=true&output=csv",   // old Google Sheet: only used if dataUrl is emptied (rollback)
 
-  // The posts come from the admin screen. Its public feed address goes here.
-  // To go back to the Google Sheet, set dataUrl to "" (the sheetCsvUrl above is then used).
   dataUrl: "https://kiripost-links-admin.pages.dev/api/links",
   testBanner: false,
 
@@ -325,7 +346,10 @@ function renderGrid() {
     pic.addEventListener("error", () => { if (++n < imgs.length) pic.src = imgs[n]; });
     if (imgs.length) pic.src = imgs[0];
     box.appendChild(pic);
+    pic.setAttribute("draggable", "false");
+    if (p.headline) { const cap = el("div", { class: "cap", "aria-hidden": "true" }); cap.appendChild(el("b", {}, p.headline)); cap.appendChild(el("i", {}, p.type === "reel" ? "Watch on YouTube \u2192" : "Read story \u2192")); box.appendChild(cap); }
     a.appendChild(box);
+    a._post = p;
     if (p.type === "reel") {
       const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       s.setAttribute("class", "play"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
@@ -335,6 +359,118 @@ function renderGrid() {
   });
   $("more").hidden = list.length <= shown;
 }
+
+/* ---------------- press-and-hold / right-click menu ---------------- */
+const HOLD_MS = 450, MOVE_PX = 10;
+const MENU_ICONS = {
+  ig: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r=".6"/>',
+  dm: '<path d="M21 4 3 11l7 3 3 7z"/><path d="m10 14 11-10"/>',
+  telegram: '<path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15z"/>',
+  facebook: '<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',
+  share: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+  km: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>'
+};
+function httpsOnly(u) { try { return new URL(u).protocol === "https:" ? u : ""; } catch (e) { return ""; } }
+function toast(msg) {
+  document.querySelectorAll(".toast").forEach(t => t.remove());
+  const t = el("div", { class: "toast", role: "status" }, msg); document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch (e) {
+    try { const ta = el("textarea", { "aria-hidden": "true" }); ta.value = text; ta.style.cssText = "position:fixed;opacity:0;left:-999px"; document.body.appendChild(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; }
+    catch (e2) { return false; }
+  }
+}
+function svgIcon(name) { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true"); s.innerHTML = MENU_ICONS[name] || ""; return s; }
+let openMenu = null, lastType = "mouse";
+document.addEventListener("pointerdown", e => { lastType = e.pointerType || "mouse"; }, true);
+document.addEventListener("keydown", () => { lastType = "key"; }, true);
+function closeMenu(returnFocus) {
+  if (!openMenu) return;
+  const { back, box, tile } = openMenu; openMenu = null;
+  back.remove(); box.remove(); document.removeEventListener("keydown", onMenuKey, true);
+  if (returnFocus && tile) tile.focus({ preventScroll: true });
+}
+function onMenuKey(e) {
+  if (!openMenu) return;
+  if (e.key === "Escape") { e.preventDefault(); closeMenu(true); return; }
+  if (e.key === "Tab") {
+    const items = [...openMenu.box.querySelectorAll("a,button")]; if (!items.length) return;
+    const i = items.indexOf(document.activeElement);
+    e.preventDefault(); items[(i + (e.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+  }
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    const items = [...openMenu.box.querySelectorAll("a,button")]; const i = items.indexOf(document.activeElement);
+    e.preventDefault(); items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus();
+  }
+}
+function showMenu(tile, x, y) {
+  const p = tile._post; if (!p) return;
+  closeMenu(false);
+  const url = httpsOnly(p.link), title = p.headline || "Kiripost";
+  const igUrl = p.type === "post" && /^[\w-]{5,20}$/.test(p.ig || "") ? "https://www.instagram.com/p/" + p.ig + "/" : "";
+  const kmUrl = p.type === "post" ? httpsOnly(p.khmer) : "";
+  const back = el("div", { class: "menu-back" });
+  const sheet = lastType === "touch" || (lastType !== "mouse" && lastType !== "key" && window.matchMedia("(pointer:coarse)").matches);
+  const fine = !sheet;
+  const box = el("div", { class: "menu " + (fine ? "pop" : "sheet"), role: "dialog", "aria-modal": "true", "aria-label": "Options: " + title });
+  box.appendChild(el("h2", {}, title));
+  const item = (icon, label, o) => {
+    const n = o.href ? el("a", { href: o.href, target: "_blank", rel: "noopener noreferrer" }) : el("button", { type: "button" });
+    n.appendChild(svgIcon(icon)); n.appendChild(document.createTextNode(label));
+    n.addEventListener("click", () => { if (o.run) o.run(); if (o.href) setTimeout(() => closeMenu(false), 0); else closeMenu(false); });
+    box.appendChild(n); return n;
+  };
+  if (url) {
+    box.appendChild(el("div", { class: "grp" }, "Share story"));
+    const native = sheet && navigator.share;   // phones: the system share sheet reaches Instagram DM and Facebook properly
+    if (native) item("share", "Share to Instagram, Facebook & more", { run: () => navigator.share({ title, url }).catch(() => {}) });
+    else item("dm", "Send in an Instagram message", { run: () => { copyText(url); window.open("https://www.instagram.com/direct/inbox/", "_blank", "noopener"); toast("Link copied. Paste it into a message."); } });
+    item("telegram", "Share on Telegram", { href: "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(title) });
+    if (!native) item("facebook", "Share on Facebook", { href: "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) });
+    box.appendChild(el("hr"));
+    item("copy", "Copy link", { run: async () => { toast((await copyText(url)) ? "Link copied" : "Couldn’t copy. Press and hold the link instead."); } });
+  }
+  if (igUrl) item("ig", "View on Instagram", { href: igUrl });
+  if (kmUrl) item("km", "Read in Khmer", { href: kmUrl });
+  document.body.appendChild(back); document.body.appendChild(box);
+  if (fine) {                       // popover next to the pointer, kept inside the window
+    const r = box.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    box.style.left = Math.max(8, Math.min(x, W - r.width - 8)) + "px"; box.style.top = Math.max(8, Math.min(y, H - r.height - 8)) + "px";
+  }
+  openMenu = { back, box, tile };
+  const openedAt = Date.now();      // the finger lifting right after a long press must not close the menu it just opened
+  back.addEventListener("click", () => { if (Date.now() - openedAt > 600) closeMenu(true); });
+  back.addEventListener("contextmenu", e => { e.preventDefault(); closeMenu(true); });
+  document.addEventListener("keydown", onMenuKey, true);
+  const first = box.querySelector("a,button"); if (first) first.focus({ preventScroll: true });
+  if (navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} }
+}
+(function holdGestures() {
+  const grid = $("grid"); let timer = null, sx = 0, sy = 0, tile = null, held = false;
+  const stop = () => { clearTimeout(timer); timer = null; };
+  grid.addEventListener("pointerdown", e => {
+    const a = e.target.closest("a.post"); if (!a || !a._post || (e.pointerType === "mouse" && e.button !== 0)) return;
+    tile = a; held = false; a._held = false; sx = e.clientX; sy = e.clientY; stop();
+    timer = setTimeout(() => { timer = null; held = true; a._held = true; showMenu(a, sx, sy); }, HOLD_MS);
+  });
+  grid.addEventListener("pointermove", e => { if (timer && Math.hypot(e.clientX - sx, e.clientY - sy) > MOVE_PX) stop(); });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(t => grid.addEventListener(t, stop));
+  window.addEventListener("scroll", stop, { passive: true });
+  grid.addEventListener("click", e => { const a = e.target.closest("a.post"); if (a && a._held) { e.preventDefault(); e.stopPropagation(); a._held = false; } }, true);
+  grid.addEventListener("contextmenu", e => {            // right-click, Android press-and-hold, keyboard menu key
+    const a = e.target.closest("a.post"); if (!a || !a._post) return;
+    e.preventDefault(); stop();
+    if (openMenu) return;
+    let x = e.clientX, y = e.clientY;
+    if (!x && !y) { const r = a.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
+    showMenu(a, x, y);
+  });
+  grid.addEventListener("dragstart", e => e.preventDefault());
+})();
 
 async function load() {
   renderChrome();
