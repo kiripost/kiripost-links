@@ -39,6 +39,8 @@
   .wrap { max-width:640px; margin:0 auto; padding:0 0 calc(24px + env(safe-area-inset-bottom)); }
   .wrap > .social, .wrap > .pills, .wrap > footer { padding-left:16px; padding-right:16px; }
 
+  .testbar { background:#fff3cd; color:#664d03; text-align:center; font-size:12px; padding:4px 8px; border-bottom:1px solid #ffe69c; }
+
   /* sticky top bar: logo left, Website button right */
   .bar { position:sticky; top:0; z-index:5; background:var(--bar); border-bottom:1px solid var(--line); }
   .bar .in { max-width:640px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
@@ -92,6 +94,7 @@
 </style>
 </head>
 <body>
+<div class="testbar" id="testbar" hidden>Test copy. The real page is links.kiripost.com.</div>
 <div class="bar"><div class="in">
   <a href="https://kiripost.com" aria-label="Kiripost home"><img class="logo" id="logo" src="https://kiripost.com/assets/images/kiripost-logo.svg" alt="Kiripost" width="116" height="34"></a>
   <a class="site-btn" id="site-btn" href="https://kiripost.com">Website</a>
@@ -117,7 +120,12 @@
 const SETTINGS = {
   // The Google Sheet, published as CSV: File > Share > Publish to web > (the Posts tab) > CSV.
   // Paste the address it gives you between the quotes. Leave it empty to use BACKUP_POSTS.
-  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzQUv2NLMMSKMgtzJFkQ2_Nks9hnS2kJ4p9it2VT7JrF9XTQoFPdo1rWLHH-Cfj-5QowzFBGul7wkx/pub?gid=1029545437&single=true&output=csv",
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzQUv2NLMMSKMgtzJFkQ2_Nks9hnS2kJ4p9it2VT7JrF9XTQoFPdo1rWLHH-Cfj-5QowzFBGul7wkx/pub?gid=1029545437&single=true&output=csv",   // old Google Sheet: only used if dataUrl is emptied (rollback)
+
+  // The posts come from the admin screen. Its public feed address goes here.
+  // To go back to the Google Sheet, set dataUrl to "" (the sheetCsvUrl above is then used).
+  dataUrl: "https://kiripost-links-admin.pages.dev/api/links",
+  testBanner: false,
 
   tagline: "Tap a post to read the full story",
 
@@ -334,7 +342,15 @@ async function load() {
   if (fromHash) currentTab = fromHash.key;
   selectTab(currentTab, false);
   let list = clean(BACKUP_POSTS);
-  if (SETTINGS.sheetCsvUrl) {
+  if (SETTINGS.testBanner) $("testbar").hidden = false;
+  if (SETTINGS.dataUrl) {
+    try {
+      const r = await fetch(SETTINGS.dataUrl, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const j = await r.json();
+      if (Array.isArray(j.items)) list = clean(j.items);
+    } catch (e) { console.warn("Kiripost links: could not load the feed, showing BACKUP_POSTS.", e); }
+  } else if (SETTINGS.sheetCsvUrl) {
     try {
       const r = await fetch(SETTINGS.sheetCsvUrl, { cache: "no-store" });
       if (!r.ok) throw new Error("HTTP " + r.status);
