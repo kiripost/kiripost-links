@@ -412,7 +412,7 @@ function showMenu(tile, x, y) {
   const p = tile._post; if (!p) return;
   closeMenu(false);
   const url = httpsOnly(p.link), title = p.headline || "Kiripost";
-  const igUrl = p.type === "post" && /^[\w-]{5,20}$/.test(p.ig || "") ? "https://www.instagram.com/p/" + p.ig + "/" : "";
+  const igUrl = /^[\w-]{5,20}$/.test(p.ig || "") ? "https://www.instagram.com/" + (p.kind === "reel" ? "reel" : "p") + "/" + p.ig + "/" : "";
   const kmUrl = p.type === "post" ? httpsOnly(p.khmer) : "";
   const back = el("div", { class: "menu-back" });
   const sheet = lastType === "touch" || (lastType !== "mouse" && lastType !== "key" && window.matchMedia("(pointer:coarse)").matches);
