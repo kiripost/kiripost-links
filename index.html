@@ -88,13 +88,16 @@
   .post .cap i { display:block; margin-top:5px; font-style:normal; font-size:11.5px; font-weight:600; color:#4cc2f4; }
   @media (hover:hover) { .post:hover .img::after, .post:focus-visible .img::after { opacity:1; } .post:hover .cap, .post:focus-visible .cap { transform:none; } }
   .post:active .img::after { opacity:1; }
-  .post .play { position:absolute; right:6px; top:6px; width:22px; height:22px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.55)); }
-  .post .play path { fill:#fff; }
+  .post .kind { position:absolute; right:6px; top:6px; width:22px; height:22px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); pointer-events:none; }
+  .post .kind * { fill:none; stroke:#fff; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .post .kind .solid { fill:#fff; stroke:none; }
+  .hint { margin:10px 0 3px; padding:12px 16px; text-align:center; font-size:15px; color:var(--muted); background:#f1f3f5; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   .empty { grid-column:1/-1; text-align:center; color:var(--muted); padding:28px 0; }
   .more {
     display:block; margin:22px auto 0; padding:10px 22px; border-radius:999px; font:inherit; font-size:14px; font-weight:600;
     color:var(--ink); background:transparent; border:1.5px solid var(--ink); cursor:pointer;
   }
+  .more[hidden] { display:none; }
   footer { text-align:center; padding:26px 0 0; font-size:12px; color:var(--muted); }
   footer a { color:var(--muted); }
   .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
@@ -128,6 +131,7 @@
   <ul class="social" id="social"></ul>
   <ul class="pills" id="pills"></ul>
   <nav class="tabs" role="tablist" aria-label="Posts" id="tabs"></nav>
+  <p class="hint" id="hint"></p>
   <main>
     <h2 class="sr-only" id="grid-title">Posts</h2>
     <div class="grid" id="grid" aria-labelledby="grid-title" aria-live="polite"></div>
@@ -148,7 +152,8 @@ const SETTINGS = {
   dataUrl: "https://kiripost-links-admin.pages.dev/api/links",
   testBanner: false,
 
-  tagline: "Tap a post to read the full story",
+  tagline: "Tap on an image to learn more",
+  hint: "Tap on an image to learn more",
 
   // Website button (top right of the bar).
   websiteUrl: "https://kiripost.com",
@@ -170,11 +175,10 @@ const SETTINGS = {
     { label: "ខ្មែរ",   url: "" }
   ],
 
-  // Tabs. "Latest" shows every normal post, in the same order as the Instagram profile.
-  // "Reels" shows the rows whose "type" column says reel: each opens a long video on YouTube.
+  // One list of posts, in the same order as the Instagram profile (no tabs).
+  // The small icon on each picture shows the Instagram post type: images or reel (kind: "reel").
   tabs: [
-    { key: "Latest", label: "Latest", type: "post" },
-    { key: "Reels",  label: "Reels",  type: "reel" }
+    { key: "Latest", label: "Latest", type: "post" }
   ],
 
   // Added to every story link so Google Analytics can count visits from the Instagram bio.
@@ -195,14 +199,6 @@ const BACKUP_POSTS = [
   { ig: "De1PdLyyvmp", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodias-air-passenger-traffic-falls-11-as-cargo-grows-18", image: "https://cdn.kiripost.com/static/images/TRAVEL.max-800x600.png", headline: "Cambodia's Air Passenger Traffic Falls 11% as Cargo Grows 18%" },
   { ig: "De1Ll7MEh-w", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodia-freezes-prince-groups-1b-asset-continues-to-pursue-suspects", image: "https://cdn.kiripost.com/static/images/559576688_1298724508933544_2834088.2e16d0ba.fill-960x540.jpg", headline: "Cambodia Freezes Prince Group's $1B Asset, Continues to Pursue Suspects" },
   { ig: "De1KGROkivZ", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/world-vision-invests-81m-to-tackle-poverty-climate-risks-and-child-vulnerability-in-kratie", image: "https://cdn.kiripost.com/static/images/WATERMARK_3_2__boat.2e16d0ba.fill-960x540.png", headline: "World Vision Invests $8.1M in Kratie" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=LLOyWyM6zy0", headline: "Canada's Ambassador on Cambodia's Future: Investment, Reform and Regional Cooperation" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=HM2-1UUHidA", headline: "Pests, Climate Change Push Farmers to the Brink" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=yz4OX0YbP6w", headline: "One Bad Ingredient Can Break a Brand: Food Safety Matters at Every Step" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=XP7PHXlE2fk", headline: "Could the Tonle Sap's Pulse Be at Risk?" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=ADy51--nO5A", headline: "How Australia Awards Transformed a Scholar into a National Education Leader" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=wpFmMhx-kcI", headline: "\"Don't Just Sell Raw\": Australia Urges Cambodia to Build a High-Value Food Sector" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=Mn5bDUJl1Hk", headline: "Cambodia's 2029 LDC Graduation: Is the Country Ready to Lose EU EBA Trade Privileges?" },
-  { type: "reel", date: "", link: "https://www.youtube.com/watch?v=NgpFqnwlm7Q", headline: "From Refugee Camp to Battambang School: The Rise of Phare Ponleu Selpak" }
 ];
 
 /* ============================== nothing to change below ============================== */
@@ -233,7 +229,7 @@ function rowsToPosts(rows) {
   return rows.map(r => Object.fromEntries(head.map((h, i) => [h, (r[i] || "").trim()])));
 }
 function clean(list) {
-  return list.filter(p => p.link && !/^(yes|y|x|true|hide)$/i.test(p.hide || "")).map(p => ({ ...p, type: /reel/i.test(p.type || "") ? "reel" : "post" }));
+  return list.filter(p => p.link && !/^(yes|y|x|true|hide)$/i.test(p.hide || "")).map(p => ({ ...p, type: /reel/i.test(p.type || "") ? "reel" : "post", kind: /reel|video/i.test(p.kind || "") ? "reel" : "image" })).filter(p => p.type !== "reel");
 }
 // Instagram codes are time-ordered numbers written in base 64, so the code alone gives the Instagram order.
 const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
@@ -296,6 +292,7 @@ function iconSvg(name) {
 }
 function renderChrome() {
   $("tagline").textContent = SETTINGS.tagline;
+  $("hint").textContent = SETTINGS.hint;
   $("site-btn").href = SETTINGS.websiteUrl;
   const logo = $("logo");
   logo.addEventListener("error", () => { logo.onerror = null; logo.src = "assets/logo-navy.png"; logo.width = 32; });
@@ -315,7 +312,8 @@ function renderChrome() {
     li.appendChild(a); pills.appendChild(li);
   });
   const tabs = $("tabs");
-  SETTINGS.tabs.forEach(t => {
+  if (SETTINGS.tabs.length < 2) tabs.remove();
+  else SETTINGS.tabs.forEach(t => {
     const b = el("button", { type: "button", role: "tab", "aria-selected": String(t.key === currentTab), "data-key": t.key }, t.label);
     b.addEventListener("click", () => selectTab(t.key, true));
     tabs.appendChild(b);
@@ -339,7 +337,7 @@ function renderGrid() {
   }
   if (!list.length) { grid.appendChild(el("p", { class: "empty" }, "No posts here yet.")); $("more").hidden = true; return; }
   list.slice(0, shown).forEach((p, i) => {
-    const a = el("a", { class: "post", href: withTracking(p.link), "aria-label": (p.headline || "Read the story") + (p.type === "reel" ? " (video on YouTube)" : "") });
+    const a = el("a", { class: "post", href: withTracking(p.link), "aria-label": (p.headline || "Read the story") + (p.kind === "reel" ? " (reel)" : " (images)") });
     const box = el("div", { class: "img" });
     const imgs = tileImages(p), pic = el("img", { alt: "", loading: i < 9 ? "eager" : "lazy", decoding: "async" });
     let n = 0;
@@ -350,10 +348,13 @@ function renderGrid() {
     if (p.headline) { const cap = el("div", { class: "cap", "aria-hidden": "true" }); cap.appendChild(el("b", {}, p.headline)); cap.appendChild(el("i", {}, p.type === "reel" ? "Watch on YouTube \u2192" : "Read story \u2192")); box.appendChild(cap); }
     a.appendChild(box);
     a._post = p;
-    if (p.type === "reel") {
+    {
       const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      s.setAttribute("class", "play"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
-      s.innerHTML = '<path d="M8 5v14l11-7z"/>'; a.appendChild(s);
+      s.setAttribute("class", "kind"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
+      s.innerHTML = p.kind === "reel"
+        ? '<rect x="3" y="5" width="13" height="14" rx="3"/><path class="solid" d="m16 10.5 5-3v9l-5-3z"/>'
+        : '<rect x="3" y="7" width="14" height="14" rx="3"/><path d="M7 3.5h11A3.5 3.5 0 0 1 21.5 7v11"/><path d="m3.5 17 4-4 3.5 3.5 2.5-2.5 3.5 3.5"/>';
+      a.appendChild(s);
     }
     grid.appendChild(a);
   });
