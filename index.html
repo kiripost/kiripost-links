@@ -1,27 +1,504 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Replay the fall: how Nvidia lost the No. 1 spot | Kiripost</title>
-<meta name="description" content="Replay the market value of Nvidia, Apple, Microsoft and Alphabet day by day, 21 September to 12 November 2026.">
-<meta property="og:type" content="article">
-<meta property="og:site_name" content="Kiripost">
-<meta property="og:title" content="Replay the fall: how Nvidia lost the No. 1 spot">
-<meta property="og:description" content="An animated chart of Nvidia, Apple, Microsoft and Alphabet market value, 21 September to 12 November 2026.">
-<meta property="og:url" content="https://links.kiripost.com/nvidia/">
-<meta property="og:image" content="https://cdn.kiripost.com/static/images/kiripost-nvidia-fall-thumbnail-16x9.max-800x600.jpg">
-<meta property="og:image:width" content="800">
-<meta property="og:image:height" content="450">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://cdn.kiripost.com/static/images/kiripost-nvidia-fall-thumbnail-16x9.max-800x600.jpg">
-<script>
-  location.replace("https://cdn.kiripost.com/static/documents/kiripost-nvidia-fall-embed-v3.html" + location.hash);
-</script>
-<style>body{font-family:Arial,sans-serif;background:#fffdf9;color:#122d4a;padding:40px 20px;text-align:center}a{color:#065091}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kiripost | Stories from our Instagram</title>
+<meta name="description" content="Tap a post to read the full story on Kiripost.">
+<meta property="og:title" content="Kiripost | Stories from our Instagram">
+<meta property="og:description" content="Tap a post to read the full story on Kiripost.">
+<meta property="og:image" content="assets/apple-touch-icon.png?v=2">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.png?v=2">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Kantumruy+Pro:wght@400;600&display=swap" rel="stylesheet">
+<!--
+  KIRIPOST LINK-IN-BIO PAGE
+  ===========================================================================================
+  - The posts come from a Google Sheet (see SETTINGS below). Add a row there and the page
+    updates by itself, usually within 5 minutes. You don't need to edit this file for new posts.
+  - Edit this file only to change the buttons, tabs, tagline or the Sheet address.
+  - If the Sheet can't be reached, the page shows the BACKUP_POSTS list at the bottom instead.
+  ===========================================================================================
+-->
+<style>
+  :root {
+    /* Layout C, light. Colours follow kiripost.com's logo blues. */
+    --page:#fafbfc; --ink:#14181d; --muted:#5b626b; --accent:#005091; --blue:#009fe3;
+    --line:#e3e6ea; --tile:#e9edf1; --pill-bg:#005091; --pill-ink:#ffffff; --bar:#ffffff; --ring:#cfd4da;
+    --font:"PP Mori", Inter, "Kantumruy Pro", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; min-height:100vh; color:var(--ink); font:15px/1.5 var(--font);
+    background-color:var(--page);
+  }
+  .wrap { max-width:640px; margin:0 auto; padding:0 0 calc(24px + env(safe-area-inset-bottom)); }
+  .wrap > .social, .wrap > .pills, .wrap > footer { padding-left:16px; padding-right:16px; }
+
+  .testbar { background:#fff3cd; color:#664d03; text-align:center; font-size:12px; padding:4px 8px; border-bottom:1px solid #ffe69c; }
+
+  /* sticky top bar: logo left, Website button right */
+  .bar { position:sticky; top:0; z-index:5; background:var(--bar); border-bottom:1px solid var(--line); }
+  .bar .in { max-width:640px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .logo { display:block; height:34px; width:auto; }
+  .site-btn {
+    display:inline-block; min-height:40px; padding:10px 18px; border-radius:6px; font-size:14px; font-weight:600;
+    text-decoration:none; background:var(--pill-bg); color:var(--pill-ink);
+  }
+  .site-btn:focus-visible, .social a:focus-visible, .pills a:focus-visible, .tabs button:focus-visible, .post:focus-visible, .more:focus-visible { outline:3px solid var(--blue); outline-offset:-3px; }
+
+  /* social icons */
+  .social { display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin:0; padding:16px 0 0; list-style:none; }
+  .social a, .social span {
+    width:44px; height:44px; border-radius:50%; border:1.5px solid var(--ring); background:#fff; color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .social span { opacity:.55; }
+  .social svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* action buttons */
+  .pills { display:flex; justify-content:center; gap:8px; padding:14px 0 4px; margin:0; list-style:none; }
+  .pills li { flex:1 1 0; max-width:200px; }
+  .pills a { display:block; text-align:center; min-height:40px; padding:10px 12px; border-radius:999px; font-size:14px; font-weight:600;
+    text-decoration:none; color:var(--ink); border:1.5px solid var(--ring); background:#fff; }
+
+  /* tabs */
+  .tabs { display:flex; margin:10px 0 3px; border-bottom:1px solid var(--line); }
+  .tabs button {
+    flex:1; appearance:none; background:none; border:0; border-bottom:2px solid transparent; margin-bottom:-1px;
+    padding:10px 4px; font:inherit; font-size:14px; color:var(--muted); cursor:pointer;
+  }
+  .tabs button[aria-selected="true"] { color:var(--ink); font-weight:600; border-bottom-color:var(--blue); }
+
+  /* grid of posts: 3 columns like the Instagram profile, picture only */
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+  .post { position:relative; display:block; text-decoration:none; color:inherit; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .post .img { position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--tile); }
+  .post img { width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; }
+  /* hover / keyboard focus: Kiripost-blue frame and a soft blue wash, and the headline slides up in a navy strip */
+  .post .img::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .18s;
+    background:rgba(204,224,238,.28); box-shadow:inset 0 0 0 3px var(--accent); }
+  .post .cap { position:absolute; left:0; right:0; bottom:0; padding:9px 9px 10px; color:#fff; background:rgba(11,62,104,.95); pointer-events:none;
+    transform:translateY(101%); transition:transform .2s ease; }
+  .post .cap b { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; font-size:12.5px; line-height:1.3; font-weight:600; }
+  .post .cap i { display:block; margin-top:5px; font-style:normal; font-size:11.5px; font-weight:600; color:#4cc2f4; }
+  @media (hover:hover) { .post:hover .img::after, .post:focus-visible .img::after { opacity:1; } .post:hover .cap, .post:focus-visible .cap { transform:none; } }
+  .post:active .img::after { opacity:1; }
+  .post .kind { position:absolute; right:6px; top:6px; width:22px; height:22px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); pointer-events:none; }
+  .post .kind * { fill:none; stroke:#fff; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .post .kind .solid { fill:#fff; stroke:none; }
+  .hint { margin:10px 0 3px; padding:12px 16px; text-align:center; font-size:15px; color:var(--muted); background:#f1f3f5; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .empty { grid-column:1/-1; text-align:center; color:var(--muted); padding:28px 0; }
+  .more {
+    display:block; margin:22px auto 0; padding:10px 22px; border-radius:999px; font:inherit; font-size:14px; font-weight:600;
+    color:var(--ink); background:transparent; border:1.5px solid var(--ink); cursor:pointer;
+  }
+  .more[hidden] { display:none; }
+  footer { text-align:center; padding:26px 0 0; font-size:12px; color:var(--muted); }
+  footer a { color:var(--muted); }
+  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  @media (prefers-reduced-motion: reduce) { .post .img::after, .post .cap { transition:none; } }
+
+  /* press-and-hold / right-click menu */
+  .menu-back { position:fixed; inset:0; z-index:50; background:rgba(11,62,104,.42); }
+  .menu { position:fixed; z-index:51; background:#fff; color:var(--ink); box-shadow:0 12px 40px rgba(11,62,104,.35); overflow:hidden; font-size:15px; }
+  .menu.sheet { left:0; right:0; bottom:0; border-radius:16px 16px 0 0; padding-bottom:env(safe-area-inset-bottom); max-height:80vh; overflow:auto; }
+  .menu.pop { width:280px; border-radius:10px; border:1px solid var(--line); }
+  .menu h2 { margin:0; padding:14px 16px 10px; font-size:13px; line-height:1.35; font-weight:600; color:var(--muted); border-bottom:1px solid var(--line);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .menu .grp { padding:10px 16px 2px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  .menu a, .menu button { display:flex; align-items:center; gap:12px; width:100%; min-height:46px; padding:10px 16px; border:0; background:none; font:inherit; color:var(--ink); text-align:left; text-decoration:none; cursor:pointer; }
+  .menu a:hover, .menu button:hover { background:#eaf3fa; }
+  .menu a:focus-visible, .menu button:focus-visible { outline:3px solid var(--blue); outline-offset:-3px; background:#eaf3fa; }
+  .menu svg { width:20px; height:20px; flex:none; fill:none; stroke:var(--accent); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .menu hr { border:0; border-top:1px solid var(--line); margin:4px 0; }
+  .toast { position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:60; max-width:90vw; padding:10px 16px; border-radius:999px; background:#0b3e68; color:#fff; font-size:14px; }
+</style>
 </head>
 <body>
-<p>Opening the interactive chart…</p>
-<p><a href="https://cdn.kiripost.com/static/documents/kiripost-nvidia-fall-embed-v3.html">Tap here if it does not open</a></p>
+<div class="testbar" id="testbar" hidden>Test copy. The real page is links.kiripost.com.</div>
+<div class="bar"><div class="in">
+  <a href="https://kiripost.com" aria-label="Kiripost home"><img class="logo" id="logo" src="https://kiripost.com/assets/images/kiripost-logo.svg" alt="Kiripost" width="116" height="34"></a>
+  <a class="site-btn" id="site-btn" href="https://kiripost.com">Website</a>
+</div></div>
+<div class="wrap">
+  <h1 class="sr-only">Kiripost: stories from our Instagram</h1>
+  <p id="tagline" class="sr-only"></p>
+  <ul class="social" id="social"></ul>
+  <ul class="pills" id="pills"></ul>
+  <nav class="tabs" role="tablist" aria-label="Posts" id="tabs"></nav>
+  <p class="hint" id="hint"></p>
+  <main>
+    <h2 class="sr-only" id="grid-title">Posts</h2>
+    <div class="grid" id="grid" aria-labelledby="grid-title" aria-live="polite"></div>
+    <button type="button" class="more" id="more" hidden>Show more</button>
+  </main>
+  <footer><a href="https://kiripost.com" id="footer-link">kiripost.com</a></footer>
+</div>
+
+<script>
+/* =========================================================================================
+   SETTINGS  -  the only part you normally change
+   ========================================================================================= */
+const SETTINGS = {
+  // The Google Sheet, published as CSV: File > Share > Publish to web > (the Posts tab) > CSV.
+  // Paste the address it gives you between the quotes. Leave it empty to use BACKUP_POSTS.
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzQUv2NLMMSKMgtzJFkQ2_Nks9hnS2kJ4p9it2VT7JrF9XTQoFPdo1rWLHH-Cfj-5QowzFBGul7wkx/pub?gid=1029545437&single=true&output=csv",   // old Google Sheet: only used if dataUrl is emptied (rollback)
+
+  dataUrl: "https://kiripost-links-admin.pages.dev/api/links",
+  testBanner: false,
+
+  tagline: "Tap on an image to learn more",
+  hint: "Tap on an image to learn more",
+
+  // Website button (top right of the bar).
+  websiteUrl: "https://kiripost.com",
+
+  // Social icons. An icon with an empty url is hidden on the live page.
+  // previewEmpty: true shows empty icons greyed out, only so a test copy shows the layout.
+  previewEmpty: false,
+  social: [
+    { name: "Facebook",  icon: "facebook",  url: "https://www.facebook.com/kiripostmedia" },
+    { name: "Telegram",  icon: "telegram",  url: "https://t.me/kiripostmedia" },
+    { name: "YouTube",   icon: "youtube",   url: "https://www.youtube.com/@kiripost" },
+    { name: "TikTok",    icon: "tiktok",    url: "https://www.tiktok.com/@kiripostmedia" },
+    { name: "Instagram", icon: "instagram", url: "https://www.instagram.com/kiripostmedia" }
+  ],
+
+  // Buttons under the icons. A button with an empty url is hidden.
+  buttons: [
+    { label: "Donate", url: "" },
+    { label: "ខ្មែរ",   url: "" }
+  ],
+
+  // One list of posts, in the same order as the Instagram profile (no tabs).
+  // The small icon on each picture shows the Instagram post type: images or reel (kind: "reel").
+  tabs: [
+    { key: "Latest", label: "Latest", type: "post" }
+  ],
+
+  // Added to every story link so Google Analytics can count visits from the Instagram bio.
+  tracking: { utm_source: "instagram", utm_medium: "social", utm_campaign: "link_in_bio" },
+
+  // Each post's graphic is the address in the Sheet's "image" column (the graphic uploaded to kiripost.com).
+  // Optional backup: a file in this "cards" folder named after the post's Instagram code.
+  cardsFolder: "cards/",
+
+  postsPerPage: 36
+};
+
+/* =========================================================================================
+   BACKUP_POSTS  -  shown only when the Sheet can't be loaded. Same columns as the Sheet:
+   ig (Instagram code), type (post or reel), date, link, image, headline (screen readers only).
+   ========================================================================================= */
+const BACKUP_POSTS = [
+  { ig: "De1PdLyyvmp", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodias-air-passenger-traffic-falls-11-as-cargo-grows-18", image: "https://cdn.kiripost.com/static/images/TRAVEL.max-800x600.png", headline: "Cambodia's Air Passenger Traffic Falls 11% as Cargo Grows 18%" },
+  { ig: "De1Ll7MEh-w", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/cambodia-freezes-prince-groups-1b-asset-continues-to-pursue-suspects", image: "https://cdn.kiripost.com/static/images/559576688_1298724508933544_2834088.2e16d0ba.fill-960x540.jpg", headline: "Cambodia Freezes Prince Group's $1B Asset, Continues to Pursue Suspects" },
+  { ig: "De1KGROkivZ", type: "post", date: "2026-10-23", link: "https://kiripost.com/stories/world-vision-invests-81m-to-tackle-poverty-climate-risks-and-child-vulnerability-in-kratie", image: "https://cdn.kiripost.com/static/images/WATERMARK_3_2__boat.2e16d0ba.fill-960x540.png", headline: "World Vision Invests $8.1M in Kratie" },
+];
+
+/* ============================== nothing to change below ============================== */
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const $ = id => document.getElementById(id);
+let posts = null, currentTab = SETTINGS.tabs[0].key, shown = SETTINGS.postsPerPage;
+
+// CSV with quoted fields, commas and line breaks inside quotes
+function parseCSV(text) {
+  const rows = []; let row = [], field = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+      else field += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); rows.push(row); row = []; field = "";
+    } else field += c;
+  }
+  if (field !== "" || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+function rowsToPosts(rows) {
+  const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
+  return rows.map(r => Object.fromEntries(head.map((h, i) => [h, (r[i] || "").trim()])));
+}
+function clean(list) {
+  return list.filter(p => p.link && !/^(yes|y|x|true|hide)$/i.test(p.hide || "")).map(p => ({ ...p, type: /reel/i.test(p.type || "") ? "reel" : "post", kind: /reel|video/i.test(p.kind || "") ? "reel" : "image" })).filter(p => p.type !== "reel");
+}
+// Instagram codes are time-ordered numbers written in base 64, so the code alone gives the Instagram order.
+const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+function igRank(code) {
+  let n = 0n;
+  for (const ch of code || "") { const i = B64.indexOf(ch); if (i < 0) return null; n = n * 64n + BigInt(i); }
+  return n;
+}
+// Posts with an Instagram code are ordered exactly as on Instagram (newest first).
+// A row with no code yet counts as the newest, so you can add it before the code is known.
+function sortPosts(list) {
+  const FAR = 1n << 200n;
+  return list.map((p, i) => ({ p, i, k: p.ig ? (igRank(p.ig) ?? 0n) : FAR }))
+    .sort((a, b) => (a.k === b.k ? a.i - b.i : a.k > b.k ? -1 : 1)).map(x => x.p);
+}
+function youtubeId(url) {
+  const m = /(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/)([\w-]{11})/.exec(url || "");
+  return m ? m[1] : "";
+}
+function tileImages(p) {
+  const list = [];
+  if (p.type === "reel") { const id = youtubeId(p.link); if (p.image) list.push(p.image); if (id) list.push("https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"); }
+  else { if (p.image) list.push(p.image); if (p.ig) list.push(SETTINGS.cardsFolder + p.ig + ".jpg"); }
+  return list;
+}
+function prettyDate(s) {
+  const m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s || "");
+  if (!m) return s || "";
+  const d = Number(m[3]), mo = MONTHS[Number(m[2]) - 1], y = Number(m[1]);
+  return d + " " + mo + (y !== new Date().getFullYear() ? " " + y : "");
+}
+function withTracking(url) {
+  try {
+    const u = new URL(url);
+    if (!/(^|\.)kiripost\.com$/i.test(u.hostname)) return url;
+    for (const k in SETTINGS.tracking) if (!u.searchParams.has(k)) u.searchParams.set(k, SETTINGS.tracking[k]);
+    return u.toString();
+  } catch (e) { return url; }
+}
+function inTab(p, tab) { return p.type === tab.type; }
+function el(tag, attrs, text) {
+  const e = document.createElement(tag);
+  for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+const ICONS = {
+  facebook: '<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',
+  telegram: '<path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15z"/>',
+  youtube: '<rect x="3" y="6" width="18" height="12" rx="3"/><path d="m10 9 5 3-5 3z"/>',
+  tiktok: '<path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.3 2.4 1.9 4 4.5 4.2"/>',
+  instagram: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r=".6"/>'
+};
+function iconSvg(name) {
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
+  s.innerHTML = ICONS[name] || "";
+  return s;
+}
+function renderChrome() {
+  $("tagline").textContent = SETTINGS.tagline;
+  $("hint").textContent = SETTINGS.hint;
+  $("site-btn").href = SETTINGS.websiteUrl;
+  const logo = $("logo");
+  logo.addEventListener("error", () => { logo.onerror = null; logo.src = "assets/logo-navy.png"; logo.width = 32; });
+  const social = $("social");
+  SETTINGS.social.forEach(s => {
+    if (!s.url && !SETTINGS.previewEmpty) return;
+    const li = el("li");
+    const a = s.url ? el("a", { href: s.url, "aria-label": s.name }) : el("span", { "aria-label": s.name + " (link not set yet)" });
+    a.appendChild(iconSvg(s.icon)); li.appendChild(a); social.appendChild(li);
+  });
+  const pills = $("pills");
+  SETTINGS.buttons.filter(b => b.url || SETTINGS.previewEmpty).forEach(b => {
+    const li = el("li");
+    const a = el("a", b.url ? { href: b.url } : { href: "#", "aria-disabled": "true" }, b.label);
+    if (!b.url) a.addEventListener("click", e => e.preventDefault());
+    if (/[ក-៿]/.test(b.label)) a.setAttribute("lang", "km");
+    li.appendChild(a); pills.appendChild(li);
+  });
+  const tabs = $("tabs");
+  if (SETTINGS.tabs.length < 2) tabs.remove();
+  else SETTINGS.tabs.forEach(t => {
+    const b = el("button", { type: "button", role: "tab", "aria-selected": String(t.key === currentTab), "data-key": t.key }, t.label);
+    b.addEventListener("click", () => selectTab(t.key, true));
+    tabs.appendChild(b);
+  });
+  $("more").addEventListener("click", () => { shown += SETTINGS.postsPerPage; renderGrid(); });
+}
+function selectTab(key, fromClick) {
+  currentTab = key; shown = SETTINGS.postsPerPage;
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.key === key)));
+  if (fromClick) history.replaceState(null, "", key === SETTINGS.tabs[0].key ? location.pathname + location.search : "#" + key.toLowerCase());
+  renderGrid();
+}
+function renderGrid() {
+  const tab = SETTINGS.tabs.find(t => t.key === currentTab) || SETTINGS.tabs[0];
+  const list = sortPosts((posts || []).filter(p => inTab(p, tab)));
+  const grid = $("grid"); grid.textContent = "";
+  $("grid-title").textContent = tab.label;
+  if (posts === null) {            // still loading: grey placeholder tiles
+    for (let i = 0; i < 6; i++) { const s = el("div", { class: "post", "aria-hidden": "true" }); s.appendChild(el("div", { class: "img" })); grid.appendChild(s); }
+    $("more").hidden = true; return;
+  }
+  if (!list.length) { grid.appendChild(el("p", { class: "empty" }, "No posts here yet.")); $("more").hidden = true; return; }
+  list.slice(0, shown).forEach((p, i) => {
+    const a = el("a", { class: "post", href: withTracking(p.link), "aria-label": (p.headline || "Read the story") + (p.kind === "reel" ? " (reel)" : " (images)") });
+    const box = el("div", { class: "img" });
+    const imgs = tileImages(p), pic = el("img", { alt: "", loading: i < 9 ? "eager" : "lazy", decoding: "async" });
+    let n = 0;
+    pic.addEventListener("error", () => { if (++n < imgs.length) pic.src = imgs[n]; });
+    if (imgs.length) pic.src = imgs[0];
+    box.appendChild(pic);
+    pic.setAttribute("draggable", "false");
+    if (p.headline) { const cap = el("div", { class: "cap", "aria-hidden": "true" }); cap.appendChild(el("b", {}, p.headline)); cap.appendChild(el("i", {}, p.type === "reel" ? "Watch on YouTube \u2192" : "Read story \u2192")); box.appendChild(cap); }
+    a.appendChild(box);
+    a._post = p;
+    {
+      const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      s.setAttribute("class", "kind"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
+      s.innerHTML = p.kind === "reel"
+        ? '<rect x="3" y="5" width="13" height="14" rx="3"/><path class="solid" d="m16 10.5 5-3v9l-5-3z"/>'
+        : '<rect x="3" y="7" width="14" height="14" rx="3"/><path d="M7 3.5h11A3.5 3.5 0 0 1 21.5 7v11"/><path d="m3.5 17 4-4 3.5 3.5 2.5-2.5 3.5 3.5"/>';
+      a.appendChild(s);
+    }
+    grid.appendChild(a);
+  });
+  $("more").hidden = list.length <= shown;
+}
+
+/* ---------------- press-and-hold / right-click menu ---------------- */
+const HOLD_MS = 450, MOVE_PX = 10;
+const MENU_ICONS = {
+  ig: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r=".6"/>',
+  dm: '<path d="M21 4 3 11l7 3 3 7z"/><path d="m10 14 11-10"/>',
+  telegram: '<path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15z"/>',
+  facebook: '<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',
+  share: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+  km: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>'
+};
+function httpsOnly(u) { try { return new URL(u).protocol === "https:" ? u : ""; } catch (e) { return ""; } }
+function toast(msg) {
+  document.querySelectorAll(".toast").forEach(t => t.remove());
+  const t = el("div", { class: "toast", role: "status" }, msg); document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch (e) {
+    try { const ta = el("textarea", { "aria-hidden": "true" }); ta.value = text; ta.style.cssText = "position:fixed;opacity:0;left:-999px"; document.body.appendChild(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; }
+    catch (e2) { return false; }
+  }
+}
+function svgIcon(name) { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true"); s.innerHTML = MENU_ICONS[name] || ""; return s; }
+let openMenu = null, lastType = "mouse";
+document.addEventListener("pointerdown", e => { lastType = e.pointerType || "mouse"; }, true);
+document.addEventListener("keydown", () => { lastType = "key"; }, true);
+function closeMenu(returnFocus) {
+  if (!openMenu) return;
+  const { back, box, tile } = openMenu; openMenu = null;
+  back.remove(); box.remove(); document.removeEventListener("keydown", onMenuKey, true);
+  if (returnFocus && tile) tile.focus({ preventScroll: true });
+}
+function onMenuKey(e) {
+  if (!openMenu) return;
+  if (e.key === "Escape") { e.preventDefault(); closeMenu(true); return; }
+  if (e.key === "Tab") {
+    const items = [...openMenu.box.querySelectorAll("a,button")]; if (!items.length) return;
+    const i = items.indexOf(document.activeElement);
+    e.preventDefault(); items[(i + (e.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+  }
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    const items = [...openMenu.box.querySelectorAll("a,button")]; const i = items.indexOf(document.activeElement);
+    e.preventDefault(); items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus();
+  }
+}
+function showMenu(tile, x, y) {
+  const p = tile._post; if (!p) return;
+  closeMenu(false);
+  const url = httpsOnly(p.link), title = p.headline || "Kiripost";
+  const igUrl = /^[\w-]{5,20}$/.test(p.ig || "") ? "https://www.instagram.com/" + (p.kind === "reel" ? "reel" : "p") + "/" + p.ig + "/" : "";
+  const kmUrl = p.type === "post" ? httpsOnly(p.khmer) : "";
+  const back = el("div", { class: "menu-back" });
+  const sheet = lastType === "touch" || (lastType !== "mouse" && lastType !== "key" && window.matchMedia("(pointer:coarse)").matches);
+  const fine = !sheet;
+  const box = el("div", { class: "menu " + (fine ? "pop" : "sheet"), role: "dialog", "aria-modal": "true", "aria-label": "Options: " + title });
+  box.appendChild(el("h2", {}, title));
+  const item = (icon, label, o) => {
+    const n = o.href ? el("a", { href: o.href, target: "_blank", rel: "noopener noreferrer" }) : el("button", { type: "button" });
+    n.appendChild(svgIcon(icon)); n.appendChild(document.createTextNode(label));
+    n.addEventListener("click", () => { if (o.run) o.run(); if (o.href) setTimeout(() => closeMenu(false), 0); else closeMenu(false); });
+    box.appendChild(n); return n;
+  };
+  if (url) {
+    box.appendChild(el("div", { class: "grp" }, "Share story"));
+    const native = sheet && navigator.share;   // phones: the system share sheet reaches Instagram DM and Facebook properly
+    if (native) item("share", "Share to Instagram, Facebook & more", { run: () => navigator.share({ title, url }).catch(() => {}) });
+    else item("dm", "Send in an Instagram message", { run: () => { copyText(url); window.open("https://www.instagram.com/direct/inbox/", "_blank", "noopener"); toast("Link copied. Paste it into a message."); } });
+    item("telegram", "Share on Telegram", { href: "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(title) });
+    if (!native) item("facebook", "Share on Facebook", { href: "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) });
+    box.appendChild(el("hr"));
+    item("copy", "Copy link", { run: async () => { toast((await copyText(url)) ? "Link copied" : "Couldn’t copy. Press and hold the link instead."); } });
+  }
+  if (igUrl) item("ig", "View on Instagram", { href: igUrl });
+  if (kmUrl) item("km", "Read in Khmer", { href: kmUrl });
+  document.body.appendChild(back); document.body.appendChild(box);
+  if (fine) {                       // popover next to the pointer, kept inside the window
+    const r = box.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    box.style.left = Math.max(8, Math.min(x, W - r.width - 8)) + "px"; box.style.top = Math.max(8, Math.min(y, H - r.height - 8)) + "px";
+  }
+  openMenu = { back, box, tile };
+  const openedAt = Date.now();      // the finger lifting right after a long press must not close the menu it just opened
+  back.addEventListener("click", () => { if (Date.now() - openedAt > 600) closeMenu(true); });
+  back.addEventListener("contextmenu", e => { e.preventDefault(); closeMenu(true); });
+  document.addEventListener("keydown", onMenuKey, true);
+  const first = box.querySelector("a,button"); if (first) first.focus({ preventScroll: true });
+  if (navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} }
+}
+(function holdGestures() {
+  const grid = $("grid"); let timer = null, sx = 0, sy = 0, tile = null, held = false;
+  const stop = () => { clearTimeout(timer); timer = null; };
+  grid.addEventListener("pointerdown", e => {
+    const a = e.target.closest("a.post"); if (!a || !a._post || (e.pointerType === "mouse" && e.button !== 0)) return;
+    tile = a; held = false; a._held = false; sx = e.clientX; sy = e.clientY; stop();
+    timer = setTimeout(() => { timer = null; held = true; a._held = true; showMenu(a, sx, sy); }, HOLD_MS);
+  });
+  grid.addEventListener("pointermove", e => { if (timer && Math.hypot(e.clientX - sx, e.clientY - sy) > MOVE_PX) stop(); });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(t => grid.addEventListener(t, stop));
+  window.addEventListener("scroll", stop, { passive: true });
+  grid.addEventListener("click", e => { const a = e.target.closest("a.post"); if (a && a._held) { e.preventDefault(); e.stopPropagation(); a._held = false; } }, true);
+  grid.addEventListener("contextmenu", e => {            // right-click, Android press-and-hold, keyboard menu key
+    const a = e.target.closest("a.post"); if (!a || !a._post) return;
+    e.preventDefault(); stop();
+    if (openMenu) return;
+    let x = e.clientX, y = e.clientY;
+    if (!x && !y) { const r = a.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
+    showMenu(a, x, y);
+  });
+  grid.addEventListener("dragstart", e => e.preventDefault());
+})();
+
+async function load() {
+  renderChrome();
+  const fromHash = SETTINGS.tabs.find(t => "#" + t.key.toLowerCase() === location.hash.toLowerCase());
+  if (fromHash) currentTab = fromHash.key;
+  selectTab(currentTab, false);
+  let list = clean(BACKUP_POSTS);
+  if (SETTINGS.testBanner) $("testbar").hidden = false;
+  if (SETTINGS.dataUrl) {
+    try {
+      const r = await fetch(SETTINGS.dataUrl, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const j = await r.json();
+      if (Array.isArray(j.items)) list = clean(j.items);
+    } catch (e) { console.warn("Kiripost links: could not load the feed, showing BACKUP_POSTS.", e); }
+  } else if (SETTINGS.sheetCsvUrl) {
+    try {
+      const r = await fetch(SETTINGS.sheetCsvUrl, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const fromSheet = clean(rowsToPosts(parseCSV(await r.text())));
+      if (fromSheet.length) list = fromSheet;
+    } catch (e) { console.warn("Kiripost links: could not load the Sheet, showing BACKUP_POSTS.", e); }
+  }
+  posts = list;
+  renderGrid();
+}
+load();
+</script>
 </body>
 </html>
